@@ -91,7 +91,7 @@ jobs:
         run: dotnet test --configuration Release --logger "trx;LogFileName=ContatoTestResults.trx" --no-build
 
       - name: Run integration tests for DDD API
-        working-directory: ./DddIntegrationTest
+        working-directory: ./DDDIntegrationTest
         run: dotnet test --configuration Release --logger "trx;LogFileName=DddTestResults.trx" --no-build
 
       - name: Run integration tests for Região API
