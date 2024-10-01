@@ -1,47 +1,76 @@
 name: TechChallenge3 Integration Tests
-
 on:
   push:
     branches:
       - master
   pull_request:
-    branches:
-      - master
+    types: [opened, synchronize, reopened]
 
 jobs:
   build:
+    name: Build, Test and Analyze
     runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres:13
-        env:
-          POSTGRES_USER: techuser
-          POSTGRES_PASSWORD: techpassword
-        ports:
-          - 5432:5432
-        options: > 
-          --health-cmd "pg_isready -U testuser" 
-          --health-interval 10s 
-          --health-timeout 5s 
-          --health-retries 5  # Aqui removemos a quebra de linha extra
-
-      rabbitmq:
-        image: rabbitmq:3-management
-        ports:
-          - 5672:5672
-          - 15672:15672
-        options: >
-          --health-cmd "rabbitmq-diagnostics ping" 
-          --health-interval 10s 
-          --health-timeout 5s 
-          --health-retries 5
+    env:
+      POSTGRES_USER: techuser
+      POSTGRES_PASSWORD: techpassword
+      POSTGRES_DB: techdb
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
 
     steps:
+      - name: Set up Docker Compose
+        run: |
+          echo "version: '3.8'
+          services:
+            db:
+              image: postgres:13
+              environment:
+                POSTGRES_USER: ${POSTGRES_USER}
+                POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+                POSTGRES_DB: ${POSTGRES_DB}
+              ports:
+                - '5432:5432'
+              healthcheck:
+                test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER}']
+                interval: 10s
+                timeout: 5s
+                retries: 5
+            rabbitmq:
+              image: rabbitmq:3-management
+              environment:
+                RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+                RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+              ports:
+                - '5672:5672'
+                - '15672:15672'
+              healthcheck:
+                test: ['CMD-SHELL', 'rabbitmq-diagnostics ping']
+                interval: 10s
+                timeout: 5s
+                retries: 5" > docker-compose.yml
+
+      - name: Start PostgreSQL and RabbitMQ
+        run: docker-compose up -d
+
+      - name: Wait for PostgreSQL and RabbitMQ
+        run: |
+          echo "Waiting for PostgreSQL and RabbitMQ to be ready..."
+          for i in {1..30}; do
+            if docker exec $(docker-compose ps -q db) pg_isready -U ${{ env.POSTGRES_USER }} -d ${{ env.POSTGRES_DB }} && \
+               docker exec $(docker-compose ps -q rabbitmq) rabbitmq-diagnostics ping; then
+              echo "PostgreSQL and RabbitMQ are ready!"
+              exit 0
+            fi
+            echo "Waiting..."
+            sleep 2
+          done
+          echo "Services did not become ready in time!"
+          exit 1
+
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Setup .NET Core
+      - name: Set up .NET Core
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '8.0.x'
@@ -52,15 +81,15 @@ jobs:
       - name: Build solution
         run: dotnet build --configuration Release --no-restore
 
-      - name: Run tests for Contato API
+      - name: Run integration tests for Contato API
         working-directory: ./ContatoIntegrationTest
         run: dotnet test --configuration Release --logger "trx;LogFileName=ContatoTestResults.trx" --no-build
 
-      - name: Run tests for DDD API
+      - name: Run integration tests for DDD API
         working-directory: ./DddIntegrationTest
         run: dotnet test --configuration Release --logger "trx;LogFileName=DddTestResults.trx" --no-build
 
-      - name: Run tests for Região API
+      - name: Run integration tests for Região API
         working-directory: ./RegiaoIntegrationTest
         run: dotnet test --configuration Release --logger "trx;LogFileName=RegiaoTestResults.trx" --no-build
 
@@ -73,3 +102,6 @@ jobs:
             ./ContatoIntegrationTest/TestResults/*.trx
             ./DddIntegrationTest/TestResults/*.trx
             ./RegiaoIntegrationTest/TestResults/*.trx
+
+      - name: Shutdown PostgreSQL and RabbitMQ
+        run: docker-compose down
