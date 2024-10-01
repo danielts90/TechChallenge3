@@ -1,0 +1,75 @@
+name: TechChallenge3 Integration Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:13
+        env:
+          POSTGRES_USER: techuser
+          POSTGRES_PASSWORD: techpassword
+        ports:
+          - 5432:5432
+        options: > 
+          --health-cmd "pg_isready -U testuser" 
+          --health-interval 10s 
+          --health-timeout 5s 
+          --health-retries 5
+
+      rabbitmq:
+        image: rabbitmq:3-management
+        ports:
+          - 5672:5672
+          - 15672:15672
+        options: >
+          --health-cmd "rabbitmq-diagnostics ping" 
+          --health-interval 10s 
+          --health-timeout 5s 
+          --health-retries 5
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Install dependencies
+      run: dotnet restore
+
+    - name: Build solution
+      run: dotnet build --configuration Release --no-restore
+
+    - name: Run tests for Contato API
+      working-directory: ./ContatoIntegrationTest
+      run: dotnet test --configuration Release --logger "trx;LogFileName=ContatoTestResults.trx" --no-build
+
+    - name: Run tests for DDD API
+      working-directory: ./DddIntegrationTest
+      run: dotnet test --configuration Release --logger "trx;LogFileName=DddTestResults.trx" --no-build
+
+    - name: Run tests for Região API
+      working-directory: ./RegiaoIntegrationTest
+      run: dotnet test --configuration Release --logger "trx;LogFileName=RegiaoTestResults.trx" --no-build
+
+    - name: Publish test results
+      if: always()
+      uses: actions/upload-artifact@v2
+      with:
+        name: Test-Results
+        path: |
+          ./ContatoIntegrationTest/TestResults/*.trx
+          ./DddIntegrationTest/TestResults/*.trx
+          ./RegiaoIntegrationTest/TestResults/*.trx
