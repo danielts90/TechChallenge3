@@ -61,7 +61,7 @@ public class RabbitMqConsumer<T> where T : class
     {
         if (message.Payload is Ddd ddd)
         {
-            _dddService.UpdateCache(message.EventType, ddd);
+            _ = _dddService.UpdateCache(message.EventType, ddd);
         }
     }
 }

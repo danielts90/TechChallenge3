@@ -4,6 +4,6 @@ namespace DddApi.Services;
 public interface IRegiaoService
 {
     Task<List<Regiao>> GetRegioesAsync();
-    bool UpdateCache(EventTypes eventType, Regiao regiao);
+    Task<bool> UpdateCache(EventTypes eventType, Regiao regiao);
     IEnumerable<Regiao> GetCachedRegioes();
 }

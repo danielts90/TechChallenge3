@@ -10,13 +10,20 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
-
 builder.Services.AddDbContext<DddDb>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+#if DEBUG
+
+
 builder.Services.AddHttpClient("regiao", httpclient => {
-    httpclient.BaseAddress = new Uri("http://localhost:5006/");
+    httpclient.BaseAddress = new Uri("https://localhost:7236/");
 });
+#else
+builder.Services.AddHttpClient("ddd", httpclient => {
+    httpclient.BaseAddress = new Uri("http://host.docker.internal:8081/");
+});
+#endif
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApiDocument(config =>
@@ -61,6 +68,10 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapGet("/regioes", (IRegiaoService regiaoService) =>
+{
+    return TypedResults.Ok(regiaoService.GetCachedRegioes());
+});
 
 app.MapMetrics();
 app.Run();

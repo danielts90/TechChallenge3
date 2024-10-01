@@ -26,8 +26,11 @@ public class DddService : IDddService
         return _cache;        
     }    
 
-    public bool UpdateCache(EventTypes eventType, Ddd ddd)
+    public async Task<bool> UpdateCache(EventTypes eventType, Ddd ddd)
     {
+        if (!_cache.Any())
+            await GetDdds();
+
         switch(eventType)
         {
             case EventTypes.CREATE:

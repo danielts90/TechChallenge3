@@ -60,7 +60,7 @@ public class RabbitMqConsumer<T> where T : class
     {
         if (message.Payload is Regiao regiao)
         {
-            _regiaoService.UpdateCache(message.EventType, regiao);
+            _ = _regiaoService.UpdateCache(message.EventType, regiao);
         }
     }
 }

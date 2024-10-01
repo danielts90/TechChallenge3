@@ -21,7 +21,7 @@ namespace RegiaoApi.Controllers
         }
         
         [HttpGet]
-        public async Task<IActionResult> GetAll(int id)
+        public async Task<IActionResult> GetAll()
         {
             var regioes = await _db.Regioes.ToArrayAsync();
             return Ok(regioes);

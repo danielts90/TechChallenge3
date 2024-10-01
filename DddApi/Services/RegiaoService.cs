@@ -25,9 +25,12 @@ public class RegiaoService : IRegiaoService
         return _cache;        
     }
 
-    public bool UpdateCache(EventTypes eventType, Regiao regiao)
+    public async Task<bool> UpdateCache(EventTypes eventType, Regiao regiao)
     {
-        switch(eventType)
+        if (!_cache.Any())
+            await GetRegioesAsync();
+
+        switch (eventType)
         {
             case EventTypes.CREATE:
                 _cache.Add(regiao);

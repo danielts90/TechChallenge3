@@ -1,4 +1,6 @@
 using ContatoApi.Context;
+using ContatoApi.Models;
+using ContatoApi.RabbitMq;
 using ContatoApi.Services;
 using Microsoft.EntityFrameworkCore;
 using Prometheus;
@@ -6,12 +8,20 @@ using Prometheus;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
+
 builder.Services.AddDbContext<ContatoDb>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+
+#if DEBUG
 builder.Services.AddHttpClient("ddd", httpclient => {
-    httpclient.BaseAddress = new Uri("http://localhost:5076/");
+    httpclient.BaseAddress = new Uri("https://localhost:7143/");
 });
+#else
+builder.Services.AddHttpClient("ddd", httpclient => {
+    httpclient.BaseAddress = new Uri("http://host.docker.internal:8082/");
+});
+#endif
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApiDocument(config =>
@@ -46,6 +56,9 @@ app.UseSwaggerUi(config =>
     config.DocumentPath = "/swagger/{documentName}/swagger.json";
     config.DocExpansion = "list";
 });
+
+var consumer = new RabbitMqConsumer<Ddd>("localhost", "ddd.updated", app.Services.GetRequiredService<IDddService>());
+Task.Run(() => consumer.StartConsumer());
 
 
 app.UseHttpsRedirection();
