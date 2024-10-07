@@ -1,0 +1,102 @@
+version: '3.8'
+
+services:
+  # Postgres
+  postgres:
+    image: postgres:16
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: techuser
+      POSTGRES_PASSWORD: techpassword
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - api_network
+
+  # RabbitMQ
+  rabbitmq:
+    image: rabbitmq:management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+      - "15692:15692"  # Porta para métricas Prometheus
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    command: rabbitmq-server
+    networks:
+      - api_network
+
+  # RegiaoAPI
+  regiaoapi:
+    build:
+      context: ./src/RegiaoApi
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8080"
+    depends_on:
+      - postgres
+      - rabbitmq
+    networks:
+      - api_network
+
+  # DddAPI
+  dddapi:
+    build:
+      context: ./src/DddApi
+      dockerfile: Dockerfile
+    ports:
+      - "8082:8080"
+    depends_on:
+      - postgres
+      - rabbitmq
+      - regiaoapi
+    networks:
+      - api_network
+
+  # ContatoAPI
+  contatoapi:
+    build:
+      context: ./src/ContatoApi
+      dockerfile: Dockerfile
+    ports:
+      - "8083:8080"
+    depends_on:
+      - postgres
+      - rabbitmq
+      - dddapi
+    networks:
+      - api_network
+
+  # Prometheus
+  prometheus:
+    image: prom/prometheus:latest
+    volumes: 
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - api_network
+
+  # Grafana
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+    networks:
+      - api_network
+    volumes:
+      - grafana_data:/var/lib/grafana
+
+networks:
+  api_network:
+    driver: bridge
+
+volumes:
+  prometheus_data:
+  grafana_data:
+  postgres_data:
