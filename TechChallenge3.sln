@@ -3,21 +3,21 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RegiaoApi", "RegiaoApi\RegiaoApi.csproj", "{B96A1253-6513-48C7-AA58-6CD79A758F65}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RegiaoIntegrationTest", "RegiaoIntegrationTest\RegiaoIntegrationTest.csproj", "{5CCD6588-CCB7-40C4-9177-A314C8DDA234}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DddApi", "DddApi\DddApi.csproj", "{0DEA3A64-1597-47E8-92DF-CB923359AB24}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DDDIntegrationTest", "DDDIntegrationTest\DDDIntegrationTest.csproj", "{12B93671-EB08-4B34-BA2F-33879437DD7B}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContatoApi", "ContatoApi\ContatoApi.csproj", "{B4BAA5CD-E09E-44AF-BBC9-5F05891E2F1D}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContatoIntegrationTest", "ContatoIntegrationTest\ContatoIntegrationTest.csproj", "{0DC06DD9-685B-4B57-94F5-06796CE27858}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Testes", "Testes", "{35819362-2873-4145-B5FD-912F49CACD13}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Microservices", "Microservices", "{C2A43503-B30F-42F0-B363-DB29C2FAB254}"
+	ProjectSection(SolutionItems) = preProject
+		src\DddApi\DddApi.csproj = src\DddApi\DddApi.csproj
+		src\RegiaoApi\RegiaoApi.csproj = src\RegiaoApi\RegiaoApi.csproj
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContatoApi", "src\ContatoApi\ContatoApi.csproj", "{D8BE3E08-D7FE-4C2F-89C0-69A0C9AFF559}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RegiaoIntegrationTest", "src\RegiaoIntegrationTest\RegiaoIntegrationTest.csproj", "{56CBDB99-0E91-4570-903C-7BBC3C999791}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DDDIntegrationTest", "src\DDDIntegrationTest\DDDIntegrationTest.csproj", "{646B070A-52E7-48BD-A8A6-CFA3FA3AD5BB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContatoIntegrationTest", "src\ContatoIntegrationTest\ContatoIntegrationTest.csproj", "{BE8ABEB7-52A7-4F69-BB4F-6AE53600A5D6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,41 +25,31 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{B96A1253-6513-48C7-AA58-6CD79A758F65}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B96A1253-6513-48C7-AA58-6CD79A758F65}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B96A1253-6513-48C7-AA58-6CD79A758F65}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B96A1253-6513-48C7-AA58-6CD79A758F65}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5CCD6588-CCB7-40C4-9177-A314C8DDA234}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5CCD6588-CCB7-40C4-9177-A314C8DDA234}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5CCD6588-CCB7-40C4-9177-A314C8DDA234}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5CCD6588-CCB7-40C4-9177-A314C8DDA234}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0DEA3A64-1597-47E8-92DF-CB923359AB24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0DEA3A64-1597-47E8-92DF-CB923359AB24}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0DEA3A64-1597-47E8-92DF-CB923359AB24}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0DEA3A64-1597-47E8-92DF-CB923359AB24}.Release|Any CPU.Build.0 = Release|Any CPU
-		{12B93671-EB08-4B34-BA2F-33879437DD7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{12B93671-EB08-4B34-BA2F-33879437DD7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{12B93671-EB08-4B34-BA2F-33879437DD7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{12B93671-EB08-4B34-BA2F-33879437DD7B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B4BAA5CD-E09E-44AF-BBC9-5F05891E2F1D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B4BAA5CD-E09E-44AF-BBC9-5F05891E2F1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B4BAA5CD-E09E-44AF-BBC9-5F05891E2F1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B4BAA5CD-E09E-44AF-BBC9-5F05891E2F1D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0DC06DD9-685B-4B57-94F5-06796CE27858}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0DC06DD9-685B-4B57-94F5-06796CE27858}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0DC06DD9-685B-4B57-94F5-06796CE27858}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0DC06DD9-685B-4B57-94F5-06796CE27858}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D8BE3E08-D7FE-4C2F-89C0-69A0C9AFF559}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D8BE3E08-D7FE-4C2F-89C0-69A0C9AFF559}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D8BE3E08-D7FE-4C2F-89C0-69A0C9AFF559}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D8BE3E08-D7FE-4C2F-89C0-69A0C9AFF559}.Release|Any CPU.Build.0 = Release|Any CPU
+		{56CBDB99-0E91-4570-903C-7BBC3C999791}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{56CBDB99-0E91-4570-903C-7BBC3C999791}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{56CBDB99-0E91-4570-903C-7BBC3C999791}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{56CBDB99-0E91-4570-903C-7BBC3C999791}.Release|Any CPU.Build.0 = Release|Any CPU
+		{646B070A-52E7-48BD-A8A6-CFA3FA3AD5BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{646B070A-52E7-48BD-A8A6-CFA3FA3AD5BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{646B070A-52E7-48BD-A8A6-CFA3FA3AD5BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{646B070A-52E7-48BD-A8A6-CFA3FA3AD5BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE8ABEB7-52A7-4F69-BB4F-6AE53600A5D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE8ABEB7-52A7-4F69-BB4F-6AE53600A5D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE8ABEB7-52A7-4F69-BB4F-6AE53600A5D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE8ABEB7-52A7-4F69-BB4F-6AE53600A5D6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{B96A1253-6513-48C7-AA58-6CD79A758F65} = {C2A43503-B30F-42F0-B363-DB29C2FAB254}
-		{5CCD6588-CCB7-40C4-9177-A314C8DDA234} = {35819362-2873-4145-B5FD-912F49CACD13}
-		{0DEA3A64-1597-47E8-92DF-CB923359AB24} = {C2A43503-B30F-42F0-B363-DB29C2FAB254}
-		{12B93671-EB08-4B34-BA2F-33879437DD7B} = {35819362-2873-4145-B5FD-912F49CACD13}
-		{B4BAA5CD-E09E-44AF-BBC9-5F05891E2F1D} = {C2A43503-B30F-42F0-B363-DB29C2FAB254}
-		{0DC06DD9-685B-4B57-94F5-06796CE27858} = {35819362-2873-4145-B5FD-912F49CACD13}
+		{D8BE3E08-D7FE-4C2F-89C0-69A0C9AFF559} = {C2A43503-B30F-42F0-B363-DB29C2FAB254}
+		{56CBDB99-0E91-4570-903C-7BBC3C999791} = {35819362-2873-4145-B5FD-912F49CACD13}
+		{646B070A-52E7-48BD-A8A6-CFA3FA3AD5BB} = {35819362-2873-4145-B5FD-912F49CACD13}
+		{BE8ABEB7-52A7-4F69-BB4F-6AE53600A5D6} = {35819362-2873-4145-B5FD-912F49CACD13}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7DD465BB-73A8-4364-9458-601D00B19200}
