@@ -51,7 +51,7 @@ app.Use((context, next) =>
     return next();
 });
 
-var consumer = new RabbitMqConsumer<Regiao>("rabbitmq", "regiao.updated", app.Services.GetRequiredService<IRegiaoService>());
+var consumer = new RabbitMqConsumer<Regiao>("host.docker.internal", "regiao.updated", app.Services.GetRequiredService<IRegiaoService>());
 Task.Run(() => consumer.StartConsumer());
 
 app.UseOpenApi();

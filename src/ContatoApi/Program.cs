@@ -63,7 +63,7 @@ app.UseSwaggerUi(config =>
     config.DocExpansion = "list";
 });
 
-var consumer = new RabbitMqConsumer<Ddd>("rabbitmq", "ddd.updated", app.Services.GetRequiredService<IDddService>());
+var consumer = new RabbitMqConsumer<Ddd>("host.docker.internal", "ddd.updated", app.Services.GetRequiredService<IDddService>());
 Task.Run(() => consumer.StartConsumer());
 
 

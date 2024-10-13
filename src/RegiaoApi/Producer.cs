@@ -14,7 +14,7 @@ public class Producer : IMessageProducer
 
     public void SendMessageToQueue<T>(Message<T> bodyMessage) where T : class
     {
-        var factory = new ConnectionFactory() { HostName = "rabbitmq",UserName = "guest", Password = "guest" };
+        var factory = new ConnectionFactory() { HostName = "host.docker.internal", Port = 5672, UserName = "guest", Password = "guest" };
         using (var connection = factory.CreateConnection())
         using (var channel = connection.CreateModel())
         {
