@@ -52,7 +52,7 @@ namespace RegiaoIntegrationTest
                     var connectionString = "Host=localhost;Database=RegiaoTestDb;Username=techuser;Password=techpassword";
                     options.UseNpgsql(connectionString);
                 });
-                services.AddSingleton<IMessageProducer>(provider => new Producer("test.regiao.updated"));
+                //services.AddSingleton<IMessageProducer>(provider => new Producer("test.regiao.updated"));
             });
         }
     }

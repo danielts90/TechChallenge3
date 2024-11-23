@@ -52,12 +52,12 @@ namespace DDDIntegrationTest
 
                     services.AddDbContext<DddDb>(options =>
                     {
-                        var connectionString = "Host=localhost;Database=DddTestDb;Username=techuser;Password=techpassword";
+                        var connectionString = "Host=postgres;Database=DddTestDb;Username=techuser;Password=techpassword";
                         options.UseNpgsql(connectionString);
                     });
                 });
 
-                services.AddSingleton<IMessageProducer>(provider => new Producer("test.ddd.updated"));
+                //services.AddSingleton<IMessageProducer>(provider => new Producer("test.ddd.updated"));
             });
         }
 

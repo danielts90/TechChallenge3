@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: regiao-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: regiao-api
+  template:
+    metadata:
+      labels:
+        app: regiao-api
+    spec:
+      containers:
+        - name: regiao-api
+          image: danielts90/regiaoapi:v3.0
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: regiao-api-config
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: regiao-api
+  labels:
+    app: regiao-api
+spec:
+  selector:
+    app: regiao-api
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+      nodePort: 30005
+  type: NodePort

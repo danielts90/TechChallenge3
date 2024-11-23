@@ -3,7 +3,6 @@ using ContatoApi.Models;
 using ContatoApi.RabbitMq;
 using ContatoApi.Services;
 using Microsoft.EntityFrameworkCore;
-using Polly;
 using Prometheus;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,21 +12,11 @@ builder.Services.AddControllers();
 builder.Services.AddDbContext<ContatoDb>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+var dddApi = builder.Configuration["HttpClients:dddApi"];
 
-#if DEBUG
 builder.Services.AddHttpClient("ddd", httpclient => {
-    httpclient.BaseAddress = new Uri("https://localhost:7143/");
+    httpclient.BaseAddress = new Uri(dddApi);
 });
-#else
-builder.Services.AddHttpClient("ddd", httpclient => {
-    httpclient.BaseAddress = new Uri("http://host.docker.internal:8082/");
-}).AddTransientHttpErrorPolicy(builder => builder.WaitAndRetryAsync(new[]
-{
-    TimeSpan.FromSeconds(1),
-    TimeSpan.FromSeconds(10),
-    TimeSpan.FromSeconds(20)
-}));
-#endif
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApiDocument(config =>
@@ -41,6 +30,13 @@ builder.Services.AddHostedService<DddHostedService>();
 builder.Services.AddSingleton<IDddService, DddService>();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<ContatoDb>();
+    dbContext.Database.Migrate();
+}
+
 
 var counter = Metrics.CreateCounter("webapimetric", "Contador de requests",
     new CounterConfiguration
@@ -63,7 +59,15 @@ app.UseSwaggerUi(config =>
     config.DocExpansion = "list";
 });
 
-var consumer = new RabbitMqConsumer<Ddd>("host.docker.internal", "ddd.updated", app.Services.GetRequiredService<IDddService>());
+
+var rabbitMqHost = builder.Configuration["RabbitMq:Host"];
+var rabbitMqPort = builder.Configuration["RabbitMq:Port"];
+var rabbitMqUser = builder.Configuration["RabbitMq:User"];
+var rabbitMqPassword = builder.Configuration["RabbitMq:Password"];
+var rabbitMqRegiaoQueue = builder.Configuration["RabbitMq:RegiaoQueue"];
+var rabbitMqDddQueue = builder.Configuration["RabbitMq:DddQueue"];
+
+var consumer = new RabbitMqConsumer<Ddd>(rabbitMqHost, rabbitMqDddQueue, Convert.ToInt32(rabbitMqPort), rabbitMqUser, rabbitMqPassword, app.Services.GetRequiredService<IDddService>());
 Task.Run(() => consumer.StartConsumer());
 
 

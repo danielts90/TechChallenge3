@@ -2,11 +2,22 @@ global:
   scrape_interval: 5s
 
 scrape_configs:
-  - job_name: "web-api-metrics-job"
-    metrics_path: /metrics
-    static_configs:
-      - targets:
-          - "host.docker.internal:8081"  # RegiaoAPI
-          - "host.docker.internal:8082"  # ContatoAPI
-          - "host.docker.internal:8083"  # DDDAPI
-          - "host.docker.internal:15692"  # RabbitMq
+- job_name: web-api-metrics-job
+  metrics_path: /metrics
+  static_configs:
+  - targets:
+    - host.docker.internal:8081
+    labels:
+      service: regiaoApi
+  - targets:
+    - host.docker.internal:8082
+    labels:
+      service: dddApi
+  - targets:
+    - host.docker.internal:8083
+    labels:
+      service: contatoApi
+  - targets:
+    - host.docker.internal:15692
+    labels:
+      service: rabbitmq

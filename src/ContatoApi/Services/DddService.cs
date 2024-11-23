@@ -20,6 +20,8 @@ public class DddService : IDddService
 
         if(response.IsSuccessStatusCode)
         {
+            Console.WriteLine("Chamada para obter os primeiros DDDs e criar o Cache.");
+
             var ddds = await response.Content.ReadFromJsonAsync<List<Ddd>>();
             if(ddds != null && ddds.Any())
                 _cache = ddds;

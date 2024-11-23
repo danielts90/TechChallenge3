@@ -8,20 +8,26 @@ using RabbitMQ.Client.Events;
 namespace DddApi.RabbitMq;
 public class RabbitMqConsumer<T> where T : class
 {
-    private readonly string _hostName;
     private readonly string _queueName;
+    private readonly string _hostName;
+    private readonly int _port;
+    private readonly string _user;
+    private readonly string _password;
     private readonly IRegiaoService _regiaoService;
 
-    public RabbitMqConsumer(string hostName, string queueName, IRegiaoService regiaoService)
+    public RabbitMqConsumer(string hostName, string queueName, int port, string user, string password,IRegiaoService regiaoService)
     {
         _hostName = hostName;
         _queueName = queueName;
+        _port = port;
+        _user = user;
+        _password = password;
         _regiaoService = regiaoService;
     }
 
     public void StartConsumer()
     {
-        var factory = new ConnectionFactory() { HostName = _hostName, Port = 5672, UserName = "guest", Password = "guest" };
+        var factory = new ConnectionFactory(){ HostName = _hostName, Port = _port, UserName = _user, Password = _password };
         using (var connection = factory.CreateConnection())
         using (var channel = connection.CreateModel())
         {

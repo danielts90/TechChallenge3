@@ -1,16 +1,18 @@
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
-WORKDIR /App
+# Etapa Base
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+WORKDIR /app
 EXPOSE 8080
 
-# Copy everything
-COPY . ./
-# Restore as distinct layers
-RUN dotnet restore
-# Build and publish a release
-RUN dotnet publish -c Release -o out
+# Etapa Build
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+COPY ["DddApi.csproj", "./"]
+RUN dotnet restore "DddApi.csproj"
+COPY . .
+RUN dotnet publish -c Release -o /app/publish
 
-# Build runtime image
-FROM mcr.microsoft.com/dotnet/aspnet:8.0
-WORKDIR /App
-COPY --from=build-env /App/out .
+# Etapa Runtime
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
+WORKDIR /app
+COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "DddApi.dll"]

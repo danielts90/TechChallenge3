@@ -13,17 +13,13 @@ builder.Services.AddControllers();
 builder.Services.AddDbContext<DddDb>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-#if DEBUG
 
+var regiaoApi = builder.Configuration["HttpClients:regiaoApi"];
 
 builder.Services.AddHttpClient("regiao", httpclient => {
-    httpclient.BaseAddress = new Uri("https://localhost:7236/");
+    httpclient.BaseAddress = new Uri(regiaoApi);
 });
-#else
-builder.Services.AddHttpClient("regiao", httpclient => {
-    httpclient.BaseAddress = new Uri("http://host.docker.internal:8081/");
-});
-#endif
+
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApiDocument(config =>
@@ -35,9 +31,24 @@ builder.Services.AddOpenApiDocument(config =>
 
 builder.Services.AddHostedService<RegiaoHostedService>();
 builder.Services.AddSingleton<IRegiaoService, RegiaoService>();
-builder.Services.AddSingleton<IMessageProducer>(provider => new Producer("ddd.updated"));
+
+var rabbitMqHost = builder.Configuration["RabbitMq:Host"];
+var rabbitMqPort = builder.Configuration["RabbitMq:Port"];
+var rabbitMqUser = builder.Configuration["RabbitMq:User"];
+var rabbitMqPassword = builder.Configuration["RabbitMq:Password"];
+var rabbitMqRegiaoQueue = builder.Configuration["RabbitMq:RegiaoQueue"];
+var rabbitMqDddQueue = builder.Configuration["RabbitMq:DddQueue"];
+
+
+builder.Services.AddSingleton<IMessageProducer>(provider => new Producer(rabbitMqHost, rabbitMqDddQueue, Convert.ToInt32(rabbitMqPort), rabbitMqUser, rabbitMqPassword));
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<DddDb>();
+    dbContext.Database.Migrate();
+}
 
 var counter = Metrics.CreateCounter("webapimetric", "Contador de requests",
     new CounterConfiguration
@@ -51,7 +62,9 @@ app.Use((context, next) =>
     return next();
 });
 
-var consumer = new RabbitMqConsumer<Regiao>("host.docker.internal", "regiao.updated", app.Services.GetRequiredService<IRegiaoService>());
+
+
+var consumer = new RabbitMqConsumer<Regiao>(rabbitMqHost, rabbitMqRegiaoQueue, Convert.ToInt32(rabbitMqPort), rabbitMqUser, rabbitMqPassword,  app.Services.GetRequiredService<IRegiaoService>());
 Task.Run(() => consumer.StartConsumer());
 
 app.UseOpenApi();

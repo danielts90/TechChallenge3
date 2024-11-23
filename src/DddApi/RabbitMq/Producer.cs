@@ -7,15 +7,22 @@ namespace DddApi.RabbitMq;
 public class Producer : IMessageProducer
 {
     private readonly string _queueName;
-
-    public Producer(string queueName)
+    private readonly string _hostName;
+    private readonly int _port;
+    private readonly string _user;
+    private readonly string _password;
+    public Producer(string hostName, string queueName, int port, string user, string password)
     {
         _queueName = queueName;
+        _hostName = hostName;
+        _port = port;
+        _user = user;
+        _password = password;
     }
 
     public void SendMessageToQueue<T>(Message<T> bodyMessage) where T : class
     {
-        var factory = new ConnectionFactory() { HostName = "host.docker.internal", Port = 5672, UserName = "guest", Password = "guest" };
+        var factory = new ConnectionFactory() { HostName = _hostName, Port = _port, UserName = _user, Password = _password };
         using (var connection = factory.CreateConnection())
         using (var channel = connection.CreateModel())
         {

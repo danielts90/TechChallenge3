@@ -9,20 +9,26 @@ namespace ContatoApi.RabbitMq;
 
 public class RabbitMqConsumer<T> where T : class
 {
-    private readonly string _hostName;
     private readonly string _queueName;
+    private readonly string _hostName;
+    private readonly int _port;
+    private readonly string _user;
+    private readonly string _password;
     private readonly IDddService _dddService;
 
-    public RabbitMqConsumer(string hostName, string queueName, IDddService dddService)
+    public RabbitMqConsumer(string hostName, string queueName, int port, string user, string password, IDddService dddService)
     {
         _hostName = hostName;
         _queueName = queueName;
+        _port = port;
+        _user = user;
+        _password = password;
         _dddService = dddService;
     }
 
     public void StartConsumer()
     {
-        var factory = new ConnectionFactory() { HostName = _hostName, Port = 5672, UserName = "guest", Password = "guest" };
+        var factory = new ConnectionFactory() { HostName = _hostName, Port = _port, UserName = _user, Password = _password };
         using (var connection = factory.CreateConnection())
         using (var channel = connection.CreateModel())
         {
@@ -59,6 +65,7 @@ public class RabbitMqConsumer<T> where T : class
 
     private void ProcessMessage(Message<T> message)
     {
+        Console.WriteLine("Mensagem recebida da fila de DDD.");
         if (message.Payload is Ddd ddd)
         {
             _ = _dddService.UpdateCache(message.EventType, ddd);

@@ -21,8 +21,23 @@ builder.Services.AddOpenApiDocument(config =>
     config.Version = "v1";
 });
 
-builder.Services.AddSingleton<IMessageProducer>(provider => new Producer("regiao.updated"));
+var rabbitMqHost = builder.Configuration["RabbitMq:Host"];
+var rabbitMqPort = builder.Configuration["RabbitMq:Port"];
+var rabbitMqUser = builder.Configuration["RabbitMq:User"];
+var rabbitMqPassword = builder.Configuration["RabbitMq:Password"];
+var rabbitMqRegiaoQueue = builder.Configuration["RabbitMq:RegiaoQueue"];
+var rabbitMqDddQueue = builder.Configuration["RabbitMq:DddQueue"];
+
+
+builder.Services.AddSingleton<IMessageProducer>(provider => new Producer(rabbitMqHost, rabbitMqRegiaoQueue, Convert.ToInt32(rabbitMqPort), rabbitMqUser, rabbitMqPassword));
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<RegiaoDb>();
+    dbContext.Database.Migrate(); 
+}
+
 
 var counter = Metrics.CreateCounter("webapimetric", "Contador de requests",
     new CounterConfiguration
