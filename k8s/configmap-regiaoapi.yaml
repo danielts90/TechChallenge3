@@ -8,7 +8,7 @@ data:
   HttpClients__regiaoApi: "https://localhost:7236/"
   HttpClients__dddApi: "https://localhost:7143/"
   RabbitMq__Host: "rabbitmq"
-  RabbitMq__Port: 5672
+  RabbitMq__Port: "5672"
   RabbitMq__User: "guest"
   RabbitMq__Password: "guest"
   RabbitMq__RegiaoQueue: "regiao.updated"

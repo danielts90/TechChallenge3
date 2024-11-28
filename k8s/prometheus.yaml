@@ -1,0 +1,19 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'kubernetes_apps'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets:
+          - 'regiao-api:8080'
+        labels:
+          service: 'regiaoApi'
+      - targets:
+          - 'ddd-api:8080'
+        labels:
+          service: 'dddApi'
+      - targets:
+          - 'contato-api:8080'
+        labels:
+          service: 'contatoApi'
