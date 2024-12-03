@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: regiao-api-config
+data:
+  ASPNETCORE_ENVIRONMENT: "k8s"
+  ConnectionStrings__DefaultConnection: "Host=postgres-service;Port=5432;Username=techuser;Password=techpassword;Database=regiaoDb;"
+  HttpClients__regiaoApi: "https://localhost:7236/"
+  HttpClients__dddApi: "https://localhost:7143/"
+  RabbitMq__Host: "rabbitmq"
+  RabbitMq__Port: "5672"
+  RabbitMq__User: "guest"
+  RabbitMq__Password: "guest"
+  RabbitMq__RegiaoQueue: "regiao.updated"
+  RabbitMq__DddQueue: "ddd.updated"
+  Logging__LogLevel__Default: "Information"
+  Logging__LogLevel__Microsoft_AspNetCore: "Warning"
+  AllowedHosts: "*"

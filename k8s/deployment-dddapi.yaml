@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ddd-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ddd-api
+  template:
+    metadata:
+      labels:
+        app: ddd-api
+    spec:
+      containers:
+        - name: ddd-api
+          image: danielts90/dddapi:v2.0
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: ddd-api-config
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ddd-api
+  labels:
+    app: ddd-api
+spec:
+  selector:
+    app: ddd-api
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+      nodePort: 30006
+  type: NodePort

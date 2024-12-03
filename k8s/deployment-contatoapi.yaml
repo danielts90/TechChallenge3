@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: contato-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: contato-api
+  template:
+    metadata:
+      labels:
+        app: contato-api
+    spec:
+      containers:
+        - name: contato-api
+          image: danielts90/contatoapi:v1.0
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: contato-api-config
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: contato-api
+  labels:
+    app: contato-api
+spec:
+  selector:
+    app: contato-api
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+      nodePort: 30007
+  type: NodePort

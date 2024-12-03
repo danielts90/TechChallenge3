@@ -87,15 +87,15 @@ jobs:
         run: dotnet build --configuration Release --no-restore
 
       - name: Run integration tests for Contato API
-        working-directory: ./src/ContatoIntegrationTest
+        working-directory: ./ContatoIntegrationTest
         run: dotnet test --configuration Release --logger "trx;LogFileName=ContatoTestResults.trx" --no-build
 
       - name: Run integration tests for DDD API
-        working-directory: ./src/DDDIntegrationTest
+        working-directory: ./DDDIntegrationTest
         run: dotnet test --configuration Release --logger "trx;LogFileName=DddTestResults.trx" --no-build
 
       - name: Run integration tests for Região API
-        working-directory: ./src/RegiaoIntegrationTest
+        working-directory: ./RegiaoIntegrationTest
         run: dotnet test --configuration Release --logger "trx;LogFileName=RegiaoTestResults.trx" --no-build
 
       - name: Publish test results
@@ -104,9 +104,9 @@ jobs:
         with:
           name: Test-Results
           path: |
-            ./src/ContatoIntegrationTest/TestResults/*.trx
-            ./src/DDDIntegrationTest/TestResults/*.trx
-            ./src/RegiaoIntegrationTest/TestResults/*.trx
+            ./ContatoIntegrationTest/TestResults/*.trx
+            ./DddIntegrationTest/TestResults/*.trx
+            ./RegiaoIntegrationTest/TestResults/*.trx
 
       - name: Shutdown PostgreSQL and RabbitMQ
         run: docker-compose down
