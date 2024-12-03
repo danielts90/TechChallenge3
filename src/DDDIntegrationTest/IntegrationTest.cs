@@ -4,6 +4,7 @@ using DddApi.RabbitMq;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -13,6 +14,7 @@ namespace DDDIntegrationTest
     {
         protected override IHost CreateHost(IHostBuilder builder)
         {
+            Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Test");
             var host = base.CreateHost(builder);
 
             using (var scope = host.Services.CreateScope())
@@ -40,24 +42,35 @@ namespace DDDIntegrationTest
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
-            builder.ConfigureServices(services =>
+            builder.ConfigureAppConfiguration((context, config) =>
             {
-                builder.ConfigureServices(services =>
-                {
-                    var descriptor = services.SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<DddDb>));
-                    if (descriptor != null)
-                    {
-                        services.Remove(descriptor);
-                    }
+                config.AddJsonFile("appsettings.Test.json", optional: false, reloadOnChange: true);
+            });
 
-                    services.AddDbContext<DddDb>(options =>
-                    {
-                        var connectionString = "Host=postgres;Database=DddTestDb;Username=techuser;Password=techpassword";
-                        options.UseNpgsql(connectionString);
-                    });
+            builder.ConfigureServices((context, services) =>
+            {
+                var configuration = context.Configuration;
+                var connectionString = configuration.GetConnectionString("DefaultConnection");
+
+                var descriptor = services.SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<DddDb>));
+                if (descriptor != null)
+                {
+                    services.Remove(descriptor);
+                }
+
+                services.AddDbContext<DddDb>(options =>
+                {
+                    options.UseNpgsql(connectionString);
                 });
 
-                //services.AddSingleton<IMessageProducer>(provider => new Producer("test.ddd.updated"));
+                var rabbitMqHost = context.Configuration["RabbitMq:Host"];
+                var rabbitMqPort = context.Configuration["RabbitMq:Port"];
+                var rabbitMqUser = context.Configuration["RabbitMq:User"];
+                var rabbitMqPassword = context.Configuration["RabbitMq:Password"];
+                var rabbitMqRegiaoQueue = context.Configuration["RabbitMq:RegiaoQueue"];
+                var rabbitMqDddQueue = context.Configuration["RabbitMq:DddQueue"];
+
+                services.AddSingleton<IMessageProducer>(provider => new Producer(rabbitMqHost, rabbitMqDddQueue, Convert.ToInt32(rabbitMqPort), rabbitMqUser, rabbitMqPassword));
             });
         }
 

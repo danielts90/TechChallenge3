@@ -9,6 +9,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="appsettings.Test.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="appsettings.Test.json" />
+  </ItemGroup>
+
+  <ItemGroup>
 	  <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.8" />
 	  <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.8">
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

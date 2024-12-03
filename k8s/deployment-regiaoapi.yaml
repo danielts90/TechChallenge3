@@ -15,12 +15,18 @@ spec:
       containers:
         - name: regiao-api
           image: danielts90/regiaoapi:v3.0
+          resources:
+            requests:
+              cpu: "200m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
           ports:
             - containerPort: 8080
           envFrom:
             - configMapRef:
                 name: regiao-api-config
-
 
 ---
 apiVersion: v1

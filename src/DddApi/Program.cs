@@ -47,8 +47,20 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<DddDb>();
-    dbContext.Database.Migrate();
+    try
+    {
+        if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") != "Test")
+        {
+            dbContext.Database.Migrate();
+        }
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Erro ao aplicar migrações: {ex.Message}");
+        throw;
+    }
 }
+
 
 var counter = Metrics.CreateCounter("webapimetric", "Contador de requests",
     new CounterConfiguration

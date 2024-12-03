@@ -19,6 +19,7 @@ namespace DDDIntegrationTest
         }
 
         [Fact]
+        [Trait("DDD", "GetAll")]
         public async Task Get_Ddds_ReturnsSuccessStatusCode()
         {
             // Act
@@ -32,6 +33,7 @@ namespace DDDIntegrationTest
         }
 
         [Fact]
+        [Trait("DDD", "GetById")]
         public async Task Get_DddsById_ReturnsSuccessStatusCode()
         {
             // Act
@@ -44,6 +46,7 @@ namespace DDDIntegrationTest
         }
 
         [Fact]
+        [Trait("DDD", "Create")]
         public async Task CreateDdd_IntegrationTest_ReturnsSuccessStatusCode()
         {
             // Arrange
@@ -59,6 +62,7 @@ namespace DDDIntegrationTest
         }
 
         [Fact]
+        [Trait("DDD", "Update")]
         public async Task Update_DddById_ReturnsSuccessStatusCode()
         {
             // Arrange
@@ -74,7 +78,8 @@ namespace DDDIntegrationTest
         }
 
         [Fact]
-        public async Task Delete_RegiaoById_ReturnsSuccessStatusCode()
+        [Trait("DDD", "Delete")]
+        public async Task Delete_DddById_ReturnsSuccessStatusCode()
         {
             // Act
             var response = await _client.DeleteAsync("/ddd/2");

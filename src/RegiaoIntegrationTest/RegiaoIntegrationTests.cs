@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using RegiaoApi.Context;
-using RegiaoApi.Models;
+﻿using RegiaoApi.Models;
 using System.Text;
 using System.Text.Json;
 
@@ -19,7 +17,8 @@ namespace RegiaoIntegrationTest
         }
 
         [Fact]
-        public async Task Get_Contatos_ReturnsSuccessStatusCode()
+        [Trait("Regiao", "GetAll")]
+        public async Task Get_Regiao_ReturnsSuccessStatusCode()
         {
             // Act
             var response = await _client.GetAsync("/regiao");
@@ -32,7 +31,8 @@ namespace RegiaoIntegrationTest
         }
 
         [Fact]
-        public async Task Get_ContatosById_ReturnsSuccessStatusCode()
+        [Trait("Regiao", "GetById")]
+        public async Task Get_RegiaoById_ReturnsSuccessStatusCode()
         {
             // Act
             var response = await _client.GetAsync("/regiao/1");
@@ -44,6 +44,7 @@ namespace RegiaoIntegrationTest
         }
 
         [Fact]
+        [Trait("Regiao", "Create")]
         public async Task CreateRegiao_IntegrationTest_ReturnsSuccessStatusCode()
         {
             // Arrange
@@ -59,6 +60,7 @@ namespace RegiaoIntegrationTest
         }
 
         [Fact]
+        [Trait("Regiao", "Update")]
         public async Task Update_RegiaoById_ReturnsSuccessStatusCode()
         {
             // Arrange
@@ -74,6 +76,7 @@ namespace RegiaoIntegrationTest
         }
 
         [Fact]
+        [Trait("Regiao", "Delete")]
         public async Task Delete_RegiaoById_ReturnsSuccessStatusCode()
         {
             // Act
